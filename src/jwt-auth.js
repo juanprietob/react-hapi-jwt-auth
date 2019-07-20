@@ -311,11 +311,13 @@ class JWTAuth extends Component {
   }
 
   createUser(event){
-    const {history, routeLogin} = this.props;
     const self = this;
+    const {history, routeLogin} = self.props;
+    const {newUser} = self.state;
     const target = event.target;
     event.preventDefault();
-    this.jwtauth.createUser(this.state.newUser)
+
+    this.jwtauth.createUser(newUser)
     .then(function(res){
       return self.jwtauth.getUser();
     })
@@ -327,7 +329,7 @@ class JWTAuth extends Component {
       if(res && res.response && res.response.status === 409){
         self.setState({...self.state, createFailed: true, createTarget: target});
       }
-    });;
+    });
   }
 
 
@@ -336,7 +338,7 @@ class JWTAuth extends Component {
       <Col>
         <Form autoComplete="new-password" onSubmit={this.resetUserPassword}>
           <h2 class="form-login-heading">Reset your password</h2>
-          <Form.Control type="password" placeholder="Password" required value={this.state.resetUser.password0} name="resetUser.password0" onChange={this.handleInputChange} pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" title="Password must contain at least one number and one uppercase and lowercase letter, and at least 6 or more characters" autoComplete="new-password"/>
+          <Form.Control type="password" placeholder="Password" required value={this.state.resetUser.password0} name="resetUser.password0" onChange={this.handleInputChange} pattern="^(?=.*[\d])(?=.*[A-Z])(?=.*[a-z])[\w\d/+!@#$%_-]{6,}$" title="Password must contain at least one number, one uppercase and lowercase letter, and at least 6 or more characters" autoComplete="new-password"/>
           <Form.Control type="password" placeholder="Confirm password" required value={this.state.resetUser.password1} name="resetUser.password1" onChange={this.handleInputChange} autoComplete="new-password"/>
           <Button variant="primary" size="lg" block type="submit">Reset and Login</Button>
         </Form>
