@@ -32,6 +32,7 @@ class JWTAuth extends Component {
       isCreateUser: false,
       isLoggedIn: false,
       loginFailed: false,
+      loginFailedText: "",
       createFailed: false,
       emailRequired: false,
       user: {
@@ -139,12 +140,15 @@ class JWTAuth extends Component {
       self.setState({
         ...self.state, 
         loginFailed: false,
-        loginTarget: null
+        loginTarget: null,
+        loginFailedText: ""
       })
     }, 10000);
   }
 
   pleaseLogin(){
+    const self = this;
+    const {loginFailed, loginTarget, loginFailedText} = self.state;
     return (
       <Col>
         <Row>
@@ -154,15 +158,15 @@ class JWTAuth extends Component {
               <Form.Control placeholder="Password" required type="password" value={this.state.user.password} name="user.password" onChange={this.handleInputChange} pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 6 or more characters"/>
               <Button variant="primary" size="lg" block type="submit">Login</Button>
               <Overlay
-                show={this.state.loginFailed}
-                target={this.state.loginTarget}
+                show={loginFailed}
+                target={loginTarget}
                 placement="right"
                 container={()=>{return ReactDOM.findDOMNode(this.loginRef);}}
                 containerPadding={20}
                 onEntered={()=>{this.timeHideLoginPopover()}}
               >
                 <Popover id="popover-contained" class="alert alert-warning">
-                  <strong class="text-warning">Please check your username and password!</strong>
+                  <strong class="text-warning">{loginFailedText}</strong>
                 </Popover>
               </Overlay>
             </Form>
@@ -222,14 +226,16 @@ class JWTAuth extends Component {
       history.push(routeLogin);
     })
     .catch(function(res){
-      if(res && res.response && res.response.status === 401){
-        self.setState({...self.state, loginFailed: true, loginTarget: target});
+      console.log(res);
+      if(res && res.response && (res.response.status === 401)){
+        self.setState({...self.state, loginFailed: true, loginTarget: target, loginFailedText: "Please check your username and password!"});
       }
     });
   }
 
   recoverPassword(event){
     const {target} = event;
+    const self = this;
     if(this.state.user.email != ''){
       this.jwtauth.sendRecoverPassword({
         email: this.state.user.email
@@ -237,9 +243,9 @@ class JWTAuth extends Component {
       .then(function(res){
         alert(res.data);
       })
-      .catch(function(e){
-        if(res && res.response && res.response.status === 401){
-          alert("Account not found! You need to create an account.");
+      .catch(function(res){
+        if(res && res.response && (res.response.status === 404)){
+          self.setState({...self.state, loginFailed: true, loginTarget: target, loginFailedText: "You don't have an account with that email address, please create an account first."});
         }
       })
     }else{
@@ -288,7 +294,7 @@ class JWTAuth extends Component {
                 onEntered={()=>{this.timeHideCreatePopover()}}
               >
                 <Popover id="popover-contained">
-                  <strong class="text-warning">A user with the same account exists!</strong>
+                  <strong class="text-warning">A user with the same email address exists!</strong>
                 </Popover>
               </Overlay>
             </Form>
