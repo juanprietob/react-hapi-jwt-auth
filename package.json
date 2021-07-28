@@ -4,7 +4,7 @@
   "description": "Login using JWT. A react component that uses the api from hapi-jwt-couch",
   "author": "juanprietob",
   "license": "MIT",
-  "repository": "juanprietob/clusterpost",
+  "repository": "juanprietob/react-hapi-jwt-auth",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "jsnext:main": "dist/index.es.js",
