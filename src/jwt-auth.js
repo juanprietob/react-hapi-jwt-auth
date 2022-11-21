@@ -29,7 +29,7 @@ class JWTAuth extends Component {
     this.setObjectProperty = this.setObjectProperty.bind(this);
 
     this.state = {
-      isCreateUser: false,
+      isCreateUser: props.isCreateUser? props.isCreateUser: false,
       isLoggedIn: false,
       loginFailed: false,
       loginFailedText: "",
