@@ -62,7 +62,7 @@ class Example extends Component {
 
 	//Show login and create user form
 	login(){
-		return (</JWTAuth>);
+		return (<JWTAuth/>);
 	}
 
   	render () {
